@@ -1,4 +1,4 @@
-import 'package:anokha_admin/auth/forgot_password.dart';
+import 'package:anokha_admin/auth/login_screen.dart';
 import 'package:anokha_admin/util/api.dart';
 import 'package:anokha_admin/util/data_validator.dart';
 import 'package:anokha_admin/util/helper.dart';
@@ -7,27 +7,29 @@ import 'package:anokha_admin/util/toast_message.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  final GlobalKey<FormState> _resetPasswordFormKey = GlobalKey<FormState>();
+  final TextEditingController _otpController = TextEditingController();
   final TextEditingController _managerEmailController = TextEditingController();
   final TextEditingController _managerPasswordController =
+      TextEditingController();
+  final TextEditingController _managerConfirmPasswordController =
       TextEditingController();
 
   bool _showPassword = false;
   bool isLoading = true;
 
-  Future<String> _managerLogin() async {
+  Future<String> _managerResetPassword() async {
     setState(() {
       isLoading = true;
     });
@@ -35,46 +37,56 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final dio = Dio();
 
-      debugPrint("[LOGIN] ${{
-        "managerEmail": _managerEmailController.text.trim(),
+      debugPrint("[RESET_PASSWORD] ${{
+        "otp": Helper().sha256Hash(_otpController.text),
         "managerPassword": Helper().sha256Hash(_managerPasswordController.text),
       }}");
 
+      final sp = await SharedPreferences.getInstance();
+
+      if (!sp.containsKey("anokha-fpt")) {
+        sp.clear();
+        showToast("OTP Expired. Please try again later.");
+        return "-2";
+      }
+
       final response = await dio.post(
-        API().loginUrl,
+        API().resetPasswordUrl,
         options: Options(
           contentType: Headers.jsonContentType,
+          headers: {
+            "Authorization": "Bearer ${sp.getString("anokha-fpt")}",
+          },
           validateStatus: (status) {
             return status! < 1000;
           },
         ),
         data: {
-          "managerEmail": _managerEmailController.text.trim(),
+          "otp": Helper().sha256Hash(_otpController.text),
           "managerPassword":
               Helper().sha256Hash(_managerPasswordController.text),
         },
       );
 
-      debugPrint("[LOGIN] ${response.statusCode}");
+      debugPrint("[RESET_PASSWORD] ${response.statusCode}");
 
       if (response.statusCode == 200) {
         final sp = await SharedPreferences.getInstance();
-
         sp.clear();
+        sp.setString("managerEmail", _managerEmailController.text);
 
-        sp.setString("anokha-t", response.data['SECRET_TOKEN']);
-        sp.setString("managerFullName", response.data['managerFullName']);
-        sp.setString("managerEmail", response.data['managerEmail']);
-        sp.setString("managerPhone", response.data['managerPhone']);
-        sp.setString(
-            "managerRoleId", response.data['managerRoleId'].toString());
+        showToast("Password reset successfully.");
 
-        return response.data["managerRoleId"].toString();
+        return "1";
       } else if ((response.statusCode == 400) &&
           (response.data["MESSAGE"].toString().isNotEmpty)) {
         showToast(
           response.data["MESSAGE"].toString(),
         );
+      } else if ((response.statusCode == 401)) {
+        sp.clear();
+        showToast("OTP Expired. Please try again later.");
+        return "-2";
       } else {
         showToast(
           "Something went wrong. We're working on it. Please try again later.",
@@ -116,76 +128,45 @@ class _LoginScreenState extends State<LoginScreen> {
           ? const LoadingComponent()
           : CustomScrollView(
               slivers: [
-                SliverAppBar(
-                  pinned: true,
+                SliverAppBar.large(
                   floating: false,
+                  pinned: true,
                   snap: false,
-                  forceMaterialTransparency: true,
                   centerTitle: true,
-                  clipBehavior: Clip.antiAlias,
-                  expandedHeight: 232.0,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  expandedHeight: MediaQuery.of(context).size.height * 0.24,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(16.0),
+                    ),
+                  ),
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.arrow_back_ios),
+                  ),
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.symmetric(
                       horizontal: 0.0,
-                      vertical: 8.0,
+                      vertical: 16.0,
                     ),
                     centerTitle: true,
                     collapseMode: CollapseMode.parallax,
-                    background: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.1),
+                    title: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
                       ),
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            height: 16.0,
-                          ),
-                          Image.asset(
-                            "assets/anokha2024_logo.png",
-                            height: 120.0,
-                            fit: BoxFit.fitWidth,
-                            filterQuality: FilterQuality.high,
-                            alignment: Alignment.center,
-                            colorBlendMode: BlendMode.srcATop,
-                            gaplessPlayback: true,
-                            isAntiAlias: true,
-                          ),
-                          Chip(
-                            padding: const EdgeInsets.all(8.0),
-                            avatar: const Icon(
-                              Icons.security_rounded,
-                            ),
-                            side: const BorderSide(
-                              color: Colors.black,
-                              width: 2,
-                            ),
-                            elevation: 1,
-                            iconTheme: const IconThemeData(
-                              color: Colors.black,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
-                            label: Text(
-                              "Anokha Admin App",
-                              style: GoogleFonts.poppins(
-                                textStyle:
-                                    Theme.of(context).textTheme.titleMedium,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            backgroundColor: Colors.greenAccent,
-                          ),
-                        ],
+                      child: Text(
+                        "Reset Password",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.abrilFatface(
+                          textStyle: Theme.of(context).textTheme.titleLarge,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -200,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       vertical: 8.0,
                     ),
                     child: Form(
-                      key: _loginFormKey,
+                      key: _resetPasswordFormKey,
                       autovalidateMode: AutovalidateMode.disabled,
                       canPop: false,
                       child: Column(
@@ -213,12 +194,69 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextFormField(
                             keyboardType: TextInputType.emailAddress,
                             style: GoogleFonts.poppins(),
-                            controller: _managerEmailController,
+                            initialValue: _managerEmailController.text,
+                            enabled: false,
                             validator: DataValidator().emailValidator,
                             decoration: InputDecoration(
                               labelText: "Email ID",
                               prefixIcon: const Icon(Icons.badge_rounded),
                               hintText: "Please enter your Email ID",
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer,
+                                ),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer,
+                                ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onErrorContainer,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onErrorContainer,
+                                ),
+                              ),
+                              labelStyle: GoogleFonts.poppins(),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 16.0,
+                          ),
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            style: GoogleFonts.poppins(),
+                            controller: _otpController,
+                            validator: DataValidator().otpValidator,
+                            decoration: InputDecoration(
+                              labelText: "OTP",
+                              prefixIcon: const Icon(Icons.repeat_one_rounded),
+                              hintText:
+                                  "Please enter OTP received on your email",
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 borderSide: BorderSide(
@@ -264,9 +302,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             validator: DataValidator().passwordValidator,
                             obscureText: !_showPassword,
                             decoration: InputDecoration(
-                              labelText: "Password",
+                              labelText: "New Password",
                               prefixIcon: const Icon(Icons.password_rounded),
-                              hintText: "Please enter your password",
+                              hintText: "Please enter new password",
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -317,59 +355,94 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(
                             height: 16,
                           ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) {
-                                      return const ForgotPasswordScreen();
-                                    },
-                                  ),
-                                );
-                              },
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                                overlayColor: MaterialStateProperty.all(
-                                  Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer
-                                      .withOpacity(0.2),
+                          TextFormField(
+                            keyboardType: TextInputType.visiblePassword,
+                            style: GoogleFonts.poppins(),
+                            controller: _managerConfirmPasswordController,
+                            validator: DataValidator().passwordValidator,
+                            obscureText: !_showPassword,
+                            decoration: InputDecoration(
+                              labelText: "Confirm Password",
+                              prefixIcon: const Icon(Icons.password_rounded),
+                              hintText: "Please confirm your password",
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showPassword = !_showPassword;
+                                  });
+                                },
+                                icon: Icon(
+                                  _showPassword == false
+                                      ? Icons.visibility_off_rounded
+                                      : Icons.visibility_rounded,
                                 ),
                               ),
-                              child: Text(
-                                "Forgot Password?",
-                                style: GoogleFonts.poppins(
-                                  textStyle:
-                                      Theme.of(context).textTheme.titleSmall,
-                                  fontWeight: FontWeight.w500,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onPrimaryContainer,
                                 ),
                               ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer,
+                                ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onErrorContainer,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onErrorContainer,
+                                ),
+                              ),
+                              labelStyle: GoogleFonts.poppins(),
                             ),
                           ),
                           const SizedBox(
-                            height: 16,
+                            height: 32,
                           ),
                           SizedBox(
                             width: double.infinity,
-                            child: ElevatedButton.icon(
+                            child: ElevatedButton(
                               onPressed: () {
-                                if (_loginFormKey.currentState!.validate()) {
-                                  // TODO: Implement Login
+                                if (_resetPasswordFormKey.currentState!
+                                        .validate() &&
+                                    (_managerPasswordController.text !=
+                                        _managerConfirmPasswordController
+                                            .text)) {
+                                  showToast("Passwords do not match.");
+                                  return;
+                                }
 
-                                  _managerLogin().then(
+                                if (_resetPasswordFormKey.currentState!
+                                    .validate()) {
+                                  _managerResetPassword().then(
                                     (res) {
-                                      if (res != "-1") {
+                                      if (res == "1") {
                                         debugPrint(
-                                            "[LOGIN]: ${Helper().roleIdToRoleName(res)}");
+                                            "[RESET_PASSWORD]: ${Helper().roleIdToRoleName(res)}");
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                CupertinoPageRoute(
+                                                    builder: (context) {
+                                          return const LoginScreen();
+                                        }), (route) => false);
+                                      } else if (res == "-2") {
+                                        Navigator.of(context).pop();
                                       }
                                     },
                                   );
@@ -386,12 +459,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
                               ),
-                              icon: Icon(
-                                Icons.login_rounded,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                              label: Text(
-                                "Login",
+                              child: Text(
+                                "Verify OTP and Reset Password",
                                 style: GoogleFonts.poppins(
                                   textStyle:
                                       Theme.of(context).textTheme.titleLarge,

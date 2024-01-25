@@ -25,4 +25,20 @@ class DataValidator {
 
     return null;
   }
+
+  String? otpValidator(String? otp) {
+    if ((otp == null) || (otp.isEmpty)) {
+      return "Please enter an OTP";
+    }
+
+    if (otp.length != 6) {
+      return "OTP must be 6 characters long";
+    }
+
+    if (otp.contains(" ")) {
+      return "OTP cannot have spaces.";
+    }
+
+    return null;
+  }
 }
