@@ -32,4 +32,55 @@ class Helper {
         return "Unknown";
     }
   }
+
+  List<String> departmentNameList = [
+    "Electrical and Electronics Engineering",
+    "Mechanical Engineering",
+    "Cyber Security",
+    "Mathematics",
+    "Electronics and Communication Engineering",
+    "Computer Science and Engineering",
+    "Social Work",
+    "Civil Engineering",
+    "Agriculture",
+    "English",
+    "Chemical Engineering",
+    "Aerospace Engineering",
+    "Computer Engineering and Networking",
+    "Team Media - Club",
+    "Amrita Centre for Entrepreneurship",
+    "Department of Science",
+    "Nivesha - Club",
+    "Department of Mass Communication",
+    "Elite - Club",
+    "Corporate and Industry Relations",
+    "Eventide",
+    "Toastmasters - Club"
+  ];
+
+
+  Map<String, String> deptNameToId = {
+    "Electrical and Electronics Engineering": "1",
+    "Mechanical Engineering": "2",
+    "Cyber Security": "3",
+    "Mathematics": "4",
+    "Electronics and Communication Engineering": "5",
+    "Computer Science and Engineering": "6",
+    "Social Work": "7",
+    "Civil Engineering": "8",
+    "Agriculture": "9",
+    "English": "10",
+    "Chemical Engineering": "11",
+    "Aerospace Engineering": "12",
+    "Computer Engineering and Networking": "13",
+    "Team Media - Club": "14",
+    "Amrita Centre for Entrepreneurship": "15",
+    "Department of Science": "16",
+    "Nivesha - Club": "17",
+    "Department of Mass Communication": "18",
+    "Elite - Club": "19",
+    "Corporate and Industry Relations": "20",
+    "Eventide": "21",
+    "Toastmasters - Club": "22"
+  };
 }

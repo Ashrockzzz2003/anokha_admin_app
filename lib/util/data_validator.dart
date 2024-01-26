@@ -1,7 +1,53 @@
 class DataValidator {
+  String? deptValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please select a Department';
+    }
+    // string number in range 1-22
+    final roleRegex = RegExp(r'^[1-9]$|^1[0-9]$|^2[0-2]$');
+    if (!roleRegex.hasMatch(value)) {
+      return 'Please select a valid Department';
+    }
+    return null;
+  }
+
+  String? roleValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please select a Role';
+    }
+    final roleRegex = RegExp(r'^[1-8]$');
+    if (!roleRegex.hasMatch(value)) {
+      return 'Please select a valid Role';
+    }
+    return null;
+  }
+
+  String? phoneValidator(String? value) {
+    final phoneRegex = RegExp(r'^[0-9]{10}$');
+    if (value == null || value.isEmpty) {
+      return 'Please enter Phone Number';
+    }
+    if (!phoneRegex.hasMatch(value)) {
+      return 'Please enter a valid Phone Number';
+    }
+    return null;
+  }
+
+  String? fullNameValidator(String? value) {
+    final fullNameRegex =
+        RegExp(r'^[a-zA-Z]+(?:\s[a-zA-Z]+)*(?:\.[a-zA-Z]+)*$');
+    if (value == null || value.isEmpty) {
+      return 'Please enter Full Name';
+    }
+    if (!fullNameRegex.hasMatch(value)) {
+      return 'Please enter a valid Full Name';
+    }
+    return null;
+  }
+
   String? emailValidator(String? value) {
     final emailRegex = RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.?[a-zA-Z]+)$');
-    if (value!.isEmpty) {
+    if (value == null || value.isEmpty) {
       return 'Please enter Email';
     }
     if (!emailRegex.hasMatch(value)) {

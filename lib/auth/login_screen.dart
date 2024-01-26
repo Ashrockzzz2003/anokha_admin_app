@@ -1,4 +1,13 @@
+import 'package:anokha_admin/admin/home_screen.dart';
 import 'package:anokha_admin/auth/forgot_password.dart';
+import 'package:anokha_admin/dept_head/home_screen.dart';
+import 'package:anokha_admin/eventide_attendance/home_screen.dart';
+import 'package:anokha_admin/finance/home_screen.dart';
+import 'package:anokha_admin/gate_entry_exit/home_screen.dart';
+import 'package:anokha_admin/global_event_attendance/home_screen.dart';
+import 'package:anokha_admin/local_event_attendance/home_screen.dart';
+import 'package:anokha_admin/super_admin/home_screen.dart';
+import 'package:anokha_admin/util/404.dart';
 import 'package:anokha_admin/util/api.dart';
 import 'package:anokha_admin/util/data_validator.dart';
 import 'package:anokha_admin/util/helper.dart';
@@ -7,7 +16,6 @@ import 'package:anokha_admin/util/toast_message.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -363,13 +371,37 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: ElevatedButton.icon(
                               onPressed: () {
                                 if (_loginFormKey.currentState!.validate()) {
-                                  // TODO: Implement Login
-
                                   _managerLogin().then(
                                     (res) {
                                       if (res != "-1") {
                                         debugPrint(
                                             "[LOGIN]: ${Helper().roleIdToRoleName(res)}");
+
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                CupertinoPageRoute(
+                                                    builder: (context) {
+                                          switch (res) {
+                                            case "1":
+                                              return const SuperAdminHomeScreen();
+                                            case "2":
+                                              return const AdminHomeScreen();
+                                            case "3":
+                                              return const FinanceHomeScreen();
+                                            case "4":
+                                              return const DeptHeadHomeScreen();
+                                            case "5":
+                                              return const EventideAttendanceHomeScreen();
+                                            case "6":
+                                              return const GlobalEventAttendanceHomeScreen();
+                                            case "7":
+                                              return const LocalEventAttendanceHomeScreen();
+                                            case "8":
+                                              return const GateEntryExitHomeScreen();
+                                            default:
+                                              return const NotFoundScreen();
+                                          }
+                                        }), (route) => false);
                                       }
                                     },
                                   );
