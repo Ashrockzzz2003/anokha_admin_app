@@ -108,6 +108,9 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
       return "-1";
     } catch (e) {
       debugPrint(e.toString());
+      showToast(
+        "Something went wrong. We're working on it. Please try again later.",
+      );
     } finally {
       setState(() {
         isLoading = false;
