@@ -1,3 +1,4 @@
+import 'package:anokha_admin/util/official/all_officials.dart';
 import 'package:flutter/material.dart';
 
 class AdminAllOfficialsScreen extends StatefulWidget {
@@ -10,6 +11,6 @@ class AdminAllOfficialsScreen extends StatefulWidget {
 class _AdminAllOfficialsScreenState extends State<AdminAllOfficialsScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const AllOfficialsScreen(managerRoleId: "2");
   }
 }
