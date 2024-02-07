@@ -96,6 +96,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return "-1";
     } catch (e) {
       debugPrint(e.toString());
+      showToast(
+        "Something went wrong. We're working on it. Please try again later.",
+      );
     } finally {
       setState(() {
         isLoading = false;
@@ -136,7 +139,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   expandedHeight: MediaQuery.of(context).size.height * 0.24,
                   backgroundColor:
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                      Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.1),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(16.0),
