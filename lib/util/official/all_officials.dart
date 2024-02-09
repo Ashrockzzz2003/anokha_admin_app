@@ -187,16 +187,18 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
           horizontal: 8.0,
           vertical: 6.0,
         ),
+        dense: true,
+        trailing: const Icon(Icons.keyboard_arrow_down_rounded),
         title: Text(
-          filteredOfficialData[index]["managerFullName"] ?? "",
+          "  ${filteredOfficialData[index]["managerFullName"]}" ?? "",
           style: GoogleFonts.raleway(
             textStyle: Theme.of(context).textTheme.titleMedium,
             color: Theme.of(context).colorScheme.secondary,
           ),
+          textAlign: TextAlign.start,
         ),
         subtitle: Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Chip(
               avatar: filteredOfficialData[index]['managerAccountStatus'] == "1"
@@ -261,6 +263,68 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
             ),
           ],
         ),
+        children: [
+          const Divider(
+            thickness: 1,
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.account_circle_rounded,
+            ),
+            title: Text(
+              "View Profile",
+              style: GoogleFonts.raleway(
+                textStyle: Theme.of(context).textTheme.bodyMedium,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.edit_rounded,
+            ),
+            title: Text(
+              "Edit Profile",
+              style: GoogleFonts.raleway(
+                textStyle: Theme.of(context).textTheme.bodyMedium,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+          if (filteredOfficialData[index]["managerAccountStatus"] == "1") ...[
+            ListTile(
+              leading: Icon(
+                Icons.gpp_bad_rounded,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              title: Text(
+                "Deactivate Account",
+                style: GoogleFonts.raleway(
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ),
+          ] else ...[
+            ListTile(
+              leading: const Icon(
+                Icons.verified_rounded,
+                color: Colors.greenAccent,
+              ),
+              title: Text(
+                "Activate Account",
+                style: GoogleFonts.raleway(
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.greenAccent,
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
