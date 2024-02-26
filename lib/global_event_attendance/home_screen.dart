@@ -1,4 +1,5 @@
 import 'package:anokha_admin/auth/login_screen.dart';
+import 'package:anokha_admin/global_event_attendance/profile/profile_screen.dart';
 import 'package:anokha_admin/util/home/welcome_container.dart';
 import 'package:anokha_admin/util/loading_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -45,7 +46,16 @@ class _GlobalEventAttendanceHomeScreenState extends State<GlobalEventAttendanceH
             centerTitle: true,
             leading: IconButton(
               onPressed: () {
-                // TODO: route to profile screen
+                // route to profile screen
+
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) {
+                      return const GlobalEventAttendanceProfileScreen();
+                    },
+                  ),
+                );
+
               },
               icon: Icon(
                 Icons.admin_panel_settings_rounded,

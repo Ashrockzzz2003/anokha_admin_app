@@ -48,10 +48,13 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
               headers: {
                 "Authorization": "Bearer ${sp.getString("anokha-t")}",
               },
+              validateStatus: (status) {
+                return status! < 1000;
+              },
             ),
           )
               .then((response) {
-            // TODO: getOfficials API
+            // getOfficials API
 
             /*
             {
@@ -87,7 +90,7 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
 
             switch (response.statusCode) {
               case 200:
-                // TODO: Success
+                // Success
                 debugPrint("getOfficials");
 
                 setState(() {
@@ -149,6 +152,76 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
     }
   }
 
+  Future<String> _toggleOfficialStatus(int index) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final sp = await SharedPreferences.getInstance();
+    final secretToken = sp.getString("anokha-t");
+
+    if (secretToken == null) {
+      showToast("Session expired. Please login again.");
+      return "401";
+    }
+
+    try {
+      final response = await Dio().post(
+        API().toggleOfficialStatusUrl,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {
+            "Authorization": "Bearer $secretToken",
+          },
+          validateStatus: (status) {
+            return status! < 1000;
+          },
+        ),
+        data: {
+          "managerId": filteredOfficialData[index]["managerId"],
+          "isActive": filteredOfficialData[index]["managerAccountStatus"] == "1"
+              ? "0"
+              : "1",
+        },
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          showToast(response.data["MESSAGE"]);
+          _getAllOfficials();
+          return "200";
+        case 400:
+          if (response.data["MESSAGE"] != null) {
+            showToast(response.data["MESSAGE"]);
+          } else {
+            showToast(
+              "Something went wrong. We're working on it. Please try again later.",
+            );
+          }
+          return "400";
+        case 401:
+          showToast("Session Expired. Please login again.");
+          return "401";
+        default:
+          return "500";
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      showToast(
+        "Something went wrong. We're working on it. Please try again later.",
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+
+    return "500";
+  }
+
+  int _selectedRole = 0;
+  final List _roleList = Helper().roleNameList;
+
   @override
   void initState() {
     super.initState();
@@ -158,6 +231,152 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
     });
 
     _getAllOfficials();
+  }
+
+  Widget _profileWidget(int index) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 32.0,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            constraints: BoxConstraints(
+              minWidth: MediaQuery.of(context).size.width * 0.88,
+              minHeight: MediaQuery.of(context).size.height * 0.12,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0),
+              image: const DecorationImage(
+                image: AssetImage("assets/ansan_1.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
+              ),
+              child: Text(
+                "Profile",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.habibi(
+                  textStyle: Theme.of(context).textTheme.headlineMedium,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          Chip(
+            avatar: const Icon(
+              Icons.verified_user_rounded,
+              color: Colors.black,
+              opticalSize: 2.0,
+            ),
+            elevation: 1,
+            iconTheme: const IconThemeData(
+              color: Colors.black,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            side: const BorderSide(
+              color: Colors.black,
+            ),
+            padding: const EdgeInsets.all(4.0),
+            labelPadding: const EdgeInsets.symmetric(
+              horizontal: 2.0,
+              vertical: 0.0,
+            ),
+            label: Text(
+              Helper().roleIdToRoleName(
+                officialData[index]["managerRoleId"].toString(),
+              ),
+              style: GoogleFonts.raleway(
+                textStyle: Theme.of(context).textTheme.bodyMedium,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.left,
+            ),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          TextField(
+            controller: TextEditingController(
+                text: officialData[index]["managerFullName"]),
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: "Full Name",
+              prefixIcon: const Icon(Icons.person_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          TextField(
+            controller: TextEditingController(
+                text: officialData[index]["managerEmail"]),
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: "Email ID",
+              prefixIcon: const Icon(Icons.email_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          TextField(
+            controller: TextEditingController(
+                text: officialData[index]["managerPhone"]),
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: "Phone Number",
+              prefixIcon: const Icon(Icons.phone_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          TextField(
+            controller: TextEditingController(
+                text: officialData[index]["departmentName"]),
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: "Department",
+              prefixIcon: const Icon(Icons.apartment_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget officialCard(int index) {
@@ -190,48 +409,81 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
         dense: true,
         trailing: const Icon(Icons.keyboard_arrow_down_rounded),
         title: Text(
-          "  ${filteredOfficialData[index]["managerFullName"]}" ?? "",
+          "  ${filteredOfficialData[index]["managerFullName"]}",
           style: GoogleFonts.raleway(
             textStyle: Theme.of(context).textTheme.titleMedium,
             color: Theme.of(context).colorScheme.secondary,
           ),
           textAlign: TextAlign.start,
         ),
-        subtitle: Row(
+        subtitle: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Chip(
-              avatar: filteredOfficialData[index]['managerAccountStatus'] == "1"
-                  ? const Icon(
-                      Icons.verified_rounded,
-                      color: Colors.black,
-                      opticalSize: 2.0,
-                    )
-                  : const Icon(
-                      Icons.gpp_bad_rounded,
-                      color: Colors.black,
-                      opticalSize: 1.0,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Chip(
+                  avatar:
+                      filteredOfficialData[index]['managerAccountStatus'] == "1"
+                          ? const Icon(
+                              Icons.verified_rounded,
+                              color: Colors.black,
+                              opticalSize: 2.0,
+                            )
+                          : const Icon(
+                              Icons.gpp_bad_rounded,
+                              color: Colors.black,
+                              opticalSize: 1.0,
+                            ),
+                  elevation: 1,
+                  iconTheme: const IconThemeData(
+                    color: Colors.black,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  side: const BorderSide(
+                    color: Colors.black,
+                  ),
+                  label: const SizedBox(),
+                  labelPadding: const EdgeInsets.all(0),
+                  padding: const EdgeInsets.all(0),
+                  backgroundColor:
+                      filteredOfficialData[index]["managerAccountStatus"] == "1"
+                          ? Colors.greenAccent
+                          : Theme.of(context).colorScheme.error,
+                ),
+                const SizedBox(
+                  width: 2.0,
+                ),
+                Chip(
+                  avatar: const Icon(
+                    Icons.apartment_rounded,
+                  ),
+                  labelPadding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                  side: const BorderSide(
+                    color: Colors.black,
+                    width: 2,
+                  ),
+                  elevation: 1,
+                  iconTheme: IconThemeData(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  padding: const EdgeInsets.all(0),
+                  label: Text(
+                    filteredOfficialData[index]["departmentAbbreviation"] ?? "",
+                    style: GoogleFonts.raleway(
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
-              elevation: 1,
-              iconTheme: const IconThemeData(
-                color: Colors.black,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              side: const BorderSide(
-                color: Colors.black,
-              ),
-              label: const SizedBox(),
-              labelPadding: const EdgeInsets.all(0),
-              padding: const EdgeInsets.all(0),
-              backgroundColor:
-                  filteredOfficialData[index]["managerAccountStatus"] == "1"
-                      ? Colors.greenAccent
-                      : Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(
-              width: 2.0,
+                    textAlign: TextAlign.left,
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
+              ],
             ),
             Chip(
               avatar: const Icon(
@@ -268,6 +520,28 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
             thickness: 1,
           ),
           ListTile(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                ),
+                constraints: BoxConstraints(
+                  minWidth: MediaQuery.of(context).size.width,
+                ),
+                enableDrag: true,
+                useSafeArea: true,
+                isDismissible: true,
+                showDragHandle: true,
+                isScrollControlled: true,
+                builder: (context) {
+                  return _profileWidget(index);
+                },
+              );
+            },
             leading: const Icon(
               Icons.account_circle_rounded,
             ),
@@ -280,49 +554,92 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
               ),
             ),
           ),
-          ListTile(
-            leading: const Icon(
-              Icons.edit_rounded,
-            ),
-            title: Text(
-              "Edit Profile",
-              style: GoogleFonts.raleway(
-                textStyle: Theme.of(context).textTheme.bodyMedium,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-          ),
-          if (filteredOfficialData[index]["managerAccountStatus"] == "1") ...[
-            ListTile(
-              leading: Icon(
-                Icons.gpp_bad_rounded,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              title: Text(
-                "Deactivate Account",
-                style: GoogleFonts.raleway(
-                  textStyle: Theme.of(context).textTheme.bodyMedium,
-                  fontWeight: FontWeight.w600,
+          // ListTile(
+          //   leading: const Icon(
+          //     Icons.edit_rounded,
+          //   ),
+          //   title: Text(
+          //     "Edit Profile",
+          //     style: GoogleFonts.raleway(
+          //       textStyle: Theme.of(context).textTheme.bodyMedium,
+          //       fontWeight: FontWeight.w600,
+          //       color: Theme.of(context).colorScheme.secondary,
+          //     ),
+          //   ),
+          // ),
+          if (filteredOfficialData[index]["managerRoleId"].toString() !=
+              "1") ...[
+            if (filteredOfficialData[index]["managerAccountStatus"] == "1") ...[
+              ListTile(
+                onTap: () {
+                  _toggleOfficialStatus(index).then((res) => {
+                        if (res == "401")
+                          {
+                            SharedPreferences.getInstance().then(
+                              (sp) {
+                                final String? managerEmail =
+                                    sp.getString("managerEmail");
+                                sp.clear();
+                                sp.setString(
+                                    "managerEmail", managerEmail ?? "");
+                              },
+                            ),
+                            Navigator.of(context).pushAndRemoveUntil(
+                                CupertinoPageRoute(builder: (context) {
+                              return const LoginScreen();
+                            }), (route) => false)
+                          }
+                      });
+                },
+                leading: Icon(
+                  Icons.gpp_bad_rounded,
                   color: Theme.of(context).colorScheme.error,
                 ),
-              ),
-            ),
-          ] else ...[
-            ListTile(
-              leading: const Icon(
-                Icons.verified_rounded,
-                color: Colors.greenAccent,
-              ),
-              title: Text(
-                "Activate Account",
-                style: GoogleFonts.raleway(
-                  textStyle: Theme.of(context).textTheme.bodyMedium,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.greenAccent,
+                title: Text(
+                  "Deactivate Account",
+                  style: GoogleFonts.raleway(
+                    textStyle: Theme.of(context).textTheme.bodyMedium,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
               ),
-            ),
+            ] else ...[
+              ListTile(
+                onTap: () {
+                  _toggleOfficialStatus(index).then((res) => {
+                        if (res == "401")
+                          {
+                            SharedPreferences.getInstance().then(
+                              (sp) {
+                                final String? managerEmail =
+                                    sp.getString("managerEmail");
+                                sp.clear();
+                                sp.setString(
+                                    "managerEmail", managerEmail ?? "");
+                              },
+                            ),
+                            Navigator.of(context).pushAndRemoveUntil(
+                                CupertinoPageRoute(builder: (context) {
+                              return const LoginScreen();
+                            }), (route) => false)
+                          }
+                      });
+                },
+                leading: const Icon(
+                  Icons.verified_rounded,
+                  color: Colors.greenAccent,
+                ),
+                title: Text(
+                  "Activate Account",
+                  style: GoogleFonts.raleway(
+                    textStyle: Theme.of(context).textTheme.bodyMedium,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.greenAccent,
+                  ),
+                ),
+              ),
+            ],
           ],
         ],
       ),
@@ -371,34 +688,37 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
           ? const LoadingComponent()
           : CustomScrollView(
               slivers: [
-                SliverAppBar.large(
-                  floating: false,
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
                   pinned: true,
-                  snap: false,
                   centerTitle: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  backgroundColor: Theme.of(context)
-                      .colorScheme
-                      .secondaryContainer
-                      .withOpacity(0.3),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(16.0),
-                    ),
-                  ),
+                  expandedHeight: MediaQuery.of(context).size.height * 0.24,
                   leading: IconButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(Icons.arrow_back_ios),
+                    icon: const Icon(Icons.arrow_back_rounded),
                   ),
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.symmetric(
                       horizontal: 0.0,
-                      vertical: 16.0,
+                      vertical: 8.0,
                     ),
                     centerTitle: true,
                     collapseMode: CollapseMode.parallax,
+                    background: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(32.0),
+                        bottomRight: Radius.circular(32.0),
+                      ),
+                      child: Image.asset(
+                        "assets/ansan_1.jpg",
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
+                      ),
+                    ),
                     title: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16.0,
@@ -406,8 +726,7 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
                       ),
                       child: Text(
                         "All Officials",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.abrilFatface(
+                        style: GoogleFonts.habibi(
                           textStyle: Theme.of(context).textTheme.headlineSmall,
                           fontWeight: FontWeight.w500,
                         ),
@@ -423,7 +742,85 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          height: 48.0,
+                          child: Center(
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              children: [
+                                for (int i = 0; i < _roleList.length; i++) ...[
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0,
+                                    ),
+                                    child: ChoiceChip(
+                                      label: Text(
+                                        _roleList[i],
+                                        style: GoogleFonts.raleway(
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                          fontWeight: FontWeight.w500,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                        ),
+                                      ),
+                                      selected: _selectedRole == i,
+                                      onSelected: (bool selected) {
+                                        setState(() {
+                                          _selectedRole = i;
+                                        });
+
+                                        // debugPrint("Selected Role: $_selectedRole");
+                                        // debugPrint("Selected Role Name: ${_roleList[_selectedRole]}");
+                                        // debugPrint("Helper Role Name to Role ID: ${Helper().roleNameToRoleId(_roleList[_selectedRole])}");
+
+                                        if (_selectedRole == 0) {
+                                          setState(() {
+                                            filteredOfficialData =
+                                                List<Map<String, dynamic>>.from(
+                                                    officialData);
+                                          });
+                                        } else {
+                                          setState(() {
+                                            filteredOfficialData = List<
+                                                    Map<String, dynamic>>.from(
+                                                officialData.where((element) =>
+                                                    element["managerRoleId"]
+                                                        .toString() ==
+                                                    Helper().roleNameToRoleId(
+                                                        _roleList[
+                                                            _selectedRole])));
+                                          });
+                                        }
+                                      },
+                                      checkmarkColor: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                      selectedColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
                         if (filteredOfficialData.isEmpty) ...[
+                          const SizedBox(
+                            height: 16,
+                          ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.95,
                             padding: const EdgeInsets.symmetric(
@@ -436,32 +833,16 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
                             ),
                             child: Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.lightbulb,
-                                      color:
-                                          Theme.of(context).colorScheme.onError,
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      "No Officials registered under you yet!",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.raleway(
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onError,
-                                      ),
-                                    )
-                                  ],
+                                Text(
+                                  "No ${_selectedRole == 0 ? "Officials" : _roleList[_selectedRole]} registered under you yet!",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.raleway(
+                                    textStyle:
+                                        Theme.of(context).textTheme.titleMedium,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.onError,
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 8,
@@ -488,7 +869,6 @@ class _AllOfficialsScreenState extends State<AllOfficialsScreen> {
                             ),
                           ),
                         ] else ...[
-                          // TODO: Filters
                           ListView.builder(
                             itemCount: filteredOfficialData.length,
                             shrinkWrap: true,

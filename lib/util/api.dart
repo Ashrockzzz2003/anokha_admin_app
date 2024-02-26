@@ -6,5 +6,7 @@ class API {
   String get resetPasswordUrl => "$baseUrl/auth/resetPasswordOfficial";
   String get registerOfficialUrl => "$baseUrl/auth/registerOfficial";
   String get getAllOfficialsUrl => "$baseUrl/admin/getAllOfficials";
+  String get toggleOfficialStatusUrl => "$baseUrl/admin/toggleOfficialStatus";
+  String get profileUrl => "$baseUrl/admin/getOfficialProfile";
 
 }

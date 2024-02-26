@@ -1,3 +1,4 @@
+import 'package:anokha_admin/admin/profile/profile_screen.dart';
 import 'package:anokha_admin/auth/login_screen.dart';
 import 'package:anokha_admin/util/home/official_options.dart';
 import 'package:anokha_admin/util/home/welcome_container.dart';
@@ -46,7 +47,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   centerTitle: true,
                   leading: IconButton(
                     onPressed: () {
-                      // TODO: route to profile screen
+                      Navigator.of(context).pushAndRemoveUntil(
+                          CupertinoPageRoute(builder: (context) {
+                        return const AdminProfileScreen();
+                      }), (route) => false);
                     },
                     icon: Icon(
                       Icons.admin_panel_settings_rounded,

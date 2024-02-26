@@ -131,33 +131,37 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           ? const LoadingComponent()
           : CustomScrollView(
               slivers: [
-                SliverAppBar.large(
-                  floating: false,
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
                   pinned: true,
-                  snap: false,
                   centerTitle: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   expandedHeight: MediaQuery.of(context).size.height * 0.24,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.1),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(16.0),
-                    ),
-                  ),
                   leading: IconButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(Icons.arrow_back_ios),
+                    icon: const Icon(Icons.arrow_back_rounded),
                   ),
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.symmetric(
                       horizontal: 0.0,
-                      vertical: 16.0,
+                      vertical: 8.0,
                     ),
                     centerTitle: true,
                     collapseMode: CollapseMode.parallax,
+                    background: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(32.0),
+                        bottomRight: Radius.circular(32.0),
+                      ),
+                      child: Image.asset(
+                        "assets/ansan_1.jpg",
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
+                      ),
+                    ),
                     title: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16.0,
@@ -165,9 +169,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       ),
                       child: Text(
                         "Reset Password",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.abrilFatface(
-                          textStyle: Theme.of(context).textTheme.titleLarge,
+                        style: GoogleFonts.habibi(
+                          textStyle: Theme.of(context).textTheme.headlineSmall,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

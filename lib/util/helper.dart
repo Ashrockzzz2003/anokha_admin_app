@@ -33,6 +33,41 @@ class Helper {
     }
   }
 
+  List<String> roleNameList = [
+    "All",
+    "Super Admin",
+    "Admin",
+    "Finance",
+    "Department Head",
+    "Eventide Attendance Marker",
+    "Global Attendance Marker",
+    "Local Attendance Marker",
+    "Gate Entry Exit Marker"
+  ];
+
+  String roleNameToRoleId(String roleName) {
+    switch (roleName) {
+      case "Super Admin":
+        return "1";
+      case "Admin":
+        return "2";
+      case "Finance":
+        return "3";
+      case "Department Head":
+        return "4";
+      case "Eventide Attendance Marker":
+        return "5";
+      case "Global Attendance Marker":
+        return "6";
+      case "Local Attendance Marker":
+        return "7";
+      case "Gate Entry Exit Marker":
+        return "8";
+      default:
+        return "Unknown";
+    }
+  }
+
   List<String> departmentNameList = [
     "Electrical and Electronics Engineering",
     "Mechanical Engineering",

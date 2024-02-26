@@ -1,4 +1,5 @@
 import 'package:anokha_admin/auth/login_screen.dart';
+import 'package:anokha_admin/super_admin/profile/profile_screen.dart';
 import 'package:anokha_admin/util/home/official_options.dart';
 import 'package:anokha_admin/util/home/welcome_container.dart';
 import 'package:anokha_admin/util/loading_screen.dart';
@@ -46,7 +47,13 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
                   centerTitle: true,
                   leading: IconButton(
                     onPressed: () {
-                      // TODO: route to profile screen
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) {
+                            return const SuperAdminProfileScreen();
+                          },
+                        ),
+                      );
                     },
                     icon: Icon(
                       Icons.admin_panel_settings_rounded,

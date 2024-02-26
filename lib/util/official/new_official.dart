@@ -137,10 +137,10 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
           ? const LoadingComponent()
           : CustomScrollView(
               slivers: [
-                SliverAppBar.large(
-                  floating: false,
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
                   pinned: true,
-                  snap: false,
                   centerTitle: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   expandedHeight: MediaQuery.of(context).size.height * 0.24,
@@ -148,7 +148,7 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(Icons.arrow_back_ios),
+                    icon: const Icon(Icons.arrow_back_rounded),
                   ),
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.symmetric(
@@ -157,6 +157,17 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
                     ),
                     centerTitle: true,
                     collapseMode: CollapseMode.parallax,
+                    background: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(32.0),
+                        bottomRight: Radius.circular(32.0),
+                      ),
+                      child: Image.asset(
+                        "assets/ansan_1.jpg",
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
+                      ),
+                    ),
                     title: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16.0,
@@ -164,8 +175,7 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
                       ),
                       child: Text(
                         "New Official",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.abrilFatface(
+                        style: GoogleFonts.habibi(
                           textStyle: Theme.of(context).textTheme.headlineSmall,
                           fontWeight: FontWeight.w500,
                         ),
@@ -477,8 +487,9 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
                                 selectedManagerDepartmentId = newValue;
                               });
                             },
-                            items: Helper().departmentNameList.map<
-                                DropdownMenuItem<String>>((String value) {
+                            items: Helper()
+                                .departmentNameList
+                                .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: Helper().deptNameToId[value],
                                 child: RichText(
