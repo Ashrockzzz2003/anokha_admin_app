@@ -9,4 +9,11 @@ class API {
   String get toggleOfficialStatusUrl => "$baseUrl/admin/toggleOfficialStatus";
   String get profileUrl => "$baseUrl/admin/getOfficialProfile";
 
+  String get getAllTagsUrl => "$baseUrl/admin/getAllTags";
+
+  String get getAllEventsUrl => "$baseUrl/user/getAllEvents";
+  String get createEventUrl => "$baseUrl/admin/createEvent";
+  String get getIndividualEventPrefixUrl => "$baseUrl/user/getEventData";
+
+
 }

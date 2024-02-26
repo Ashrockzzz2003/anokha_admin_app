@@ -1,5 +1,6 @@
 import 'package:anokha_admin/auth/login_screen.dart';
 import 'package:anokha_admin/super_admin/profile/profile_screen.dart';
+import 'package:anokha_admin/util/home/event_options.dart';
 import 'package:anokha_admin/util/home/official_options.dart';
 import 'package:anokha_admin/util/home/welcome_container.dart';
 import 'package:anokha_admin/util/loading_screen.dart';
@@ -102,6 +103,10 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
                         const HomeScreenOfficialComponent(
                           managerRoleId: "1",
                         ),
+                        const SizedBox(
+                          height: 24,
+                        ),
+                        const HomeScreenEventComponent(managerRoleId: "1"),
                       ],
                     ),
                   ),
