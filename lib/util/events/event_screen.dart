@@ -308,11 +308,15 @@ class _EventScreenState extends State<EventScreen> {
                                           Theme.of(context).textTheme.bodySmall,
                                     ),
                                   ),
-                                  Text(
-                                    eventData["eventVenue"] ?? "",
-                                    style: GoogleFonts.poppins(
-                                      textStyle:
-                                          Theme.of(context).textTheme.bodySmall,
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width * 0.5,
+                                    child: Text(
+                                      eventData["eventVenue"] ?? "",
+                                      style: GoogleFonts.poppins(
+                                        textStyle:
+                                            Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                      textAlign: TextAlign.end,
                                     ),
                                   ),
                                 ],

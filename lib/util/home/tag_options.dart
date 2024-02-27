@@ -1,14 +1,14 @@
-import 'package:anokha_admin/admin/events/all_events.dart';
-import 'package:anokha_admin/admin/events/new_event.dart';
-import 'package:anokha_admin/super_admin/events/all_events.dart';
-import 'package:anokha_admin/super_admin/events/new_event.dart';
+import 'package:anokha_admin/admin/tags/add_tag_screen.dart';
+import 'package:anokha_admin/admin/tags/all_tags_screen.dart';
+import 'package:anokha_admin/super_admin/tags/add_tag_screen.dart';
+import 'package:anokha_admin/super_admin/tags/all_tags_screen.dart';
 import 'package:anokha_admin/util/404.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeScreenEventComponent extends StatelessWidget {
-  const HomeScreenEventComponent({super.key, required this.managerRoleId});
+class HomeScreenTagComponent extends StatelessWidget {
+  const HomeScreenTagComponent({super.key, required this.managerRoleId});
 
   final String managerRoleId;
 
@@ -30,7 +30,7 @@ class HomeScreenEventComponent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            "Manage Events",
+            "Manage Tags",
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               textStyle: Theme.of(context).textTheme.titleLarge,
@@ -58,9 +58,9 @@ class HomeScreenEventComponent extends StatelessWidget {
                         builder: (context) {
                           switch (managerRoleId) {
                             case "1":
-                              return const SuperAdminAllEventsScreen();
+                              return const SuperAdminAllTagsScreen();
                             case "2":
-                              return const AdminAllEventsScreen();
+                              return const AdminAllTagsScreen();
                             default:
                               return const NotFoundScreen();
                           }
@@ -79,11 +79,11 @@ class HomeScreenEventComponent extends StatelessWidget {
                     ),
                   ),
                   icon: Icon(
-                    Icons.local_fire_department_rounded,
+                    Icons.tag_rounded,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   label: Text(
-                    "All Events",
+                    "All Tags",
                     style: GoogleFonts.raleway(
                       textStyle: Theme.of(context).textTheme.titleSmall,
                       color: Theme.of(context).colorScheme.onPrimary,
@@ -101,9 +101,9 @@ class HomeScreenEventComponent extends StatelessWidget {
                         builder: (context) {
                           switch (managerRoleId) {
                             case "1":
-                              return const SuperAdminNewEventScreen();
+                              return const SuperAdminAddTagScreen();
                             case "2":
-                              return const AdminNewEventScreen();
+                              return const AdminAddTagScreen();
                             default:
                               return const NotFoundScreen();
                           }
@@ -126,7 +126,7 @@ class HomeScreenEventComponent extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   label: Text(
-                    "New Event",
+                    "Add Tag",
                     style: GoogleFonts.raleway(
                       textStyle: Theme.of(context).textTheme.titleSmall,
                       color: Theme.of(context).colorScheme.onPrimary,
