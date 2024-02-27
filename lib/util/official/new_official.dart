@@ -5,7 +5,6 @@ import 'package:anokha_admin/super_admin/home_screen.dart';
 import 'package:anokha_admin/util/404.dart';
 import 'package:anokha_admin/util/api.dart';
 import 'package:anokha_admin/util/data_validator.dart';
-import 'package:anokha_admin/util/helper.dart';
 import 'package:anokha_admin/util/loading_screen.dart';
 import 'package:anokha_admin/util/toast_message.dart';
 import 'package:dio/dio.dart';
@@ -31,9 +30,9 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
   final TextEditingController _managerPhoneController = TextEditingController();
 
   String? selectedManagerDepartmentId, selectedManagerRoleId;
-  List<String> managerDepartmentIdList = [], managerRoleIdList = [];
+  List<String> managerRoleIdList = [];
 
-  bool isLoading = true;
+  bool _isLoading = true;
 
   /*
   {
@@ -44,10 +43,101 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
     "managerDepartmentId":6
   }
   */
+  
+  List<Map<String, dynamic>> departmentData = [];
+
+  void _getAllDepartments() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      SharedPreferences.getInstance().then((sp) {
+        if (!sp.containsKey("anokha-t")) {
+          showToast("Session expired. Please login again.");
+          Navigator.of(context).pushAndRemoveUntil(
+              CupertinoPageRoute(builder: (context) {
+                return const LoginScreen();
+              }), (route) => false);
+        } else {
+          Dio()
+              .get(
+            API().getAllDepartmentsUrl,
+            options: Options(
+              contentType: Headers.jsonContentType,
+              validateStatus: (status) {
+                return status! < 1000;
+              },
+            ),
+          )
+              .then((response) {
+            // getTags API
+
+            switch (response.statusCode) {
+              case 200:
+              // Success
+                debugPrint("getAllDepartments");
+
+                setState(() {
+                  departmentData = List<Map<String, dynamic>>.from(
+                      response.data["departments"]);
+                });
+                break;
+              case 400:
+                if (response.data["MESSAGE"] != null) {
+                  showToast(response.data["MESSAGE"]);
+                } else {
+                  showToast(
+                      "Something went wrong. We're working on it. Please try again later.");
+                }
+                break;
+              case 401:
+                showToast("Session Expired. Please login again.");
+                SharedPreferences.getInstance().then((sp) {
+                  final String? managerEmail = sp.getString("managerEmail");
+                  sp.clear();
+                  sp.setString("managerEmail", managerEmail ?? "");
+                });
+                Navigator.of(context).pushAndRemoveUntil(
+                    CupertinoPageRoute(builder: (context) {
+                      return const LoginScreen();
+                    }), (route) => false);
+                break;
+              default:
+                showToast(
+                    "Something went wrong. We're working on it. Please try again later.");
+                break;
+            }
+
+            setState(() {
+              _isLoading = false;
+            });
+          }).catchError((e) {
+            debugPrint(e.toString());
+            showToast(
+              "Something went wrong. We're working on it. Please try again later.",
+            );
+
+            setState(() {
+              _isLoading = false;
+            });
+          });
+        }
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+      showToast(
+        "Something went wrong. We're working on it. Please try again later.",
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   Future<String> _registerOfficial() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
 
     try {
@@ -113,7 +203,7 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
       );
     } finally {
       setState(() {
-        isLoading = false;
+        _isLoading = false;
       });
     }
 
@@ -123,17 +213,14 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
   @override
   void initState() {
     super.initState();
-
-    setState(() {
-      isLoading = false;
-    });
+    _getAllDepartments();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      body: isLoading == true
+      body: _isLoading == true
           ? const LoadingComponent()
           : CustomScrollView(
               slivers: [
@@ -487,20 +574,19 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
                                 selectedManagerDepartmentId = newValue;
                               });
                             },
-                            items: Helper()
-                                .departmentNameList
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: Helper().deptNameToId[value],
-                                child: RichText(
-                                  overflow: TextOverflow.ellipsis,
-                                  text: TextSpan(
-                                    text: value,
-                                    style: GoogleFonts.poppins(),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                            items: departmentData.map<DropdownMenuItem<String>>(
+                                    (Map<String, dynamic> value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value["departmentId"].toString(),
+                                    child: RichText(
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text: value["departmentName"],
+                                        style: GoogleFonts.poppins(),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
                           ),
                           const SizedBox(
                             height: 32,

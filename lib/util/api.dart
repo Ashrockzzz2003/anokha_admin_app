@@ -10,9 +10,11 @@ class API {
   String get profileUrl => "$baseUrl/admin/getOfficialProfile";
 
   String get getAllTagsUrl => "$baseUrl/admin/getAllTags";
+  String get getAllDepartmentsUrl => "$baseUrl/admin/getDepartments";
 
   String get getAllEventsUrl => "$baseUrl/user/getAllEvents";
   String get createEventUrl => "$baseUrl/admin/createEvent";
+  String get updateEventUrl => "$baseUrl/admin/editEventData";
   String get getIndividualEventPrefixUrl => "$baseUrl/user/getEventData";
 
 

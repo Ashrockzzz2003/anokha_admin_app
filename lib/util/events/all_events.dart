@@ -130,9 +130,11 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
             builder: (context) {
               switch (widget.managerRoleId) {
                 case "1":
-                  return SuperAdminEventScreen(eventId: filteredEventsData[index]["eventId"].toString());
+                  return SuperAdminEventScreen(
+                      eventId: filteredEventsData[index]["eventId"].toString());
                 case "2":
-                  return AdminEventScreen(eventId: filteredEventsData[index]["eventId"].toString());
+                  return AdminEventScreen(
+                      eventId: filteredEventsData[index]["eventId"].toString());
                 default:
                   return const NotFoundScreen();
               }

@@ -51,7 +51,7 @@ class HomeScreenEventComponent extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * 0.4,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // TODO:  Navigate to Events Screen.
+                    //  Navigate to Events Screen.
                     Navigator.of(context).push(
                       CupertinoPageRoute(
                         builder: (context) {
@@ -78,7 +78,7 @@ class HomeScreenEventComponent extends StatelessWidget {
                     ),
                   ),
                   icon: Icon(
-                    Icons.badge_rounded,
+                    Icons.local_fire_department_rounded,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   label: Text(

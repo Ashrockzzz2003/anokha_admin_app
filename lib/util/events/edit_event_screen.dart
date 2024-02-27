@@ -1,7 +1,9 @@
+import 'package:anokha_admin/admin/home_screen.dart';
 import 'package:anokha_admin/auth/login_screen.dart';
+import 'package:anokha_admin/super_admin/home_screen.dart';
+import 'package:anokha_admin/util/404.dart';
 import 'package:anokha_admin/util/api.dart';
 import 'package:anokha_admin/util/data_validator.dart';
-import 'package:anokha_admin/util/helper.dart';
 import 'package:anokha_admin/util/loading_screen.dart';
 import 'package:anokha_admin/util/toast_message.dart';
 import 'package:dio/dio.dart';
@@ -12,16 +14,21 @@ import 'package:intl/intl.dart';
 import 'package:markdown_editor_plus/markdown_editor_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class NewEventScreen extends StatefulWidget {
-  const NewEventScreen({super.key, required this.managerRoleId});
+class EditEventScreen extends StatefulWidget {
+  const EditEventScreen({
+    super.key,
+    required this.managerRoleId,
+    required this.eventData,
+  });
 
   final String managerRoleId;
+  final Map<String, dynamic> eventData;
 
   @override
-  State<NewEventScreen> createState() => _NewEventScreenState();
+  State<EditEventScreen> createState() => _EditEventScreenState();
 }
 
-class _NewEventScreenState extends State<NewEventScreen> {
+class _EditEventScreenState extends State<EditEventScreen> {
   List<Map<String, dynamic>> tagData = [], departmentData = [];
 
   bool _isLoading = true;
@@ -61,10 +68,29 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 // Success
                 debugPrint("getAllTags");
 
+                Map<String, int> tagNameToTagId = {};
+
                 setState(() {
                   tagData =
                       List<Map<String, dynamic>>.from(response.data["tags"]);
                 });
+
+                for (int i = 0; i < tagData.length; i++) {
+                  tagNameToTagId[tagData[i]["tagAbbreviation"]] =
+                      tagData[i]["tagId"];
+                }
+
+                for (int i = 0; i < widget.eventData["tags"].length; i++) {
+                  // debugPrint(widget.eventData["tags"][i]["tagAbbreviation"]);
+                  // debugPrint(tagNameToTagId[widget.eventData["tags"][i]
+                  //         ["tagAbbreviation"]]
+                  //     .toString());
+                  setState(() {
+                    _selectedTagIds.add(tagNameToTagId[widget.eventData["tags"]
+                        [i]["tagAbbreviation"]]!);
+                  });
+                }
+
                 break;
               case 400:
                 if (response.data["MESSAGE"] != null) {
@@ -129,8 +155,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
           showToast("Session expired. Please login again.");
           Navigator.of(context).pushAndRemoveUntil(
               CupertinoPageRoute(builder: (context) {
-                return const LoginScreen();
-              }), (route) => false);
+            return const LoginScreen();
+          }), (route) => false);
         } else {
           Dio()
               .get(
@@ -147,13 +173,25 @@ class _NewEventScreenState extends State<NewEventScreen> {
 
             switch (response.statusCode) {
               case 200:
-              // Success
+                // Success
                 debugPrint("getAllDepartments");
+
+                Map<String, int> departmentAbbrToDeptId = {};
 
                 setState(() {
                   departmentData = List<Map<String, dynamic>>.from(
                       response.data["departments"]);
                 });
+
+                for (int i = 0; i < departmentData.length; i++) {
+                  departmentAbbrToDeptId[departmentData[i]["departmentAbbreviation"]] =
+                      departmentData[i]["departmentId"];
+                }
+
+                setState(() {
+                  _eventDepartmentId = departmentAbbrToDeptId[widget.eventData["departmentAbbreviation"]].toString();
+                });
+
                 break;
               case 400:
                 if (response.data["MESSAGE"] != null) {
@@ -172,8 +210,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 });
                 Navigator.of(context).pushAndRemoveUntil(
                     CupertinoPageRoute(builder: (context) {
-                      return const LoginScreen();
-                    }), (route) => false);
+                  return const LoginScreen();
+                }), (route) => false);
                 break;
               default:
                 showToast(
@@ -212,6 +250,28 @@ class _NewEventScreenState extends State<NewEventScreen> {
     super.initState();
     _getAllTags();
     _getAllDepartments();
+
+    setState(() {
+      _eventNameController.text = widget.eventData["eventName"];
+      _eventDescriptionController.text = widget.eventData["eventDescription"];
+      _eventMarkdownDescriptionController.text =
+          widget.eventData["eventMarkdownDescription"];
+      _eventDateController.text = widget.eventData["eventDate"];
+      _eventTimeController.text = widget.eventData["eventTime"];
+      _eventVenueController.text = widget.eventData["eventVenue"];
+      _eventImageURLController.text = widget.eventData["eventImageURL"];
+      _eventPriceController.text = widget.eventData["eventPrice"].toString();
+      _maxSeatsController.text = widget.eventData["maxSeats"].toString();
+      _minTeamSizeController.text = widget.eventData["minTeamSize"].toString();
+      _maxTeamSizeController.text = widget.eventData["maxTeamSize"].toString();
+      _isWorkshop = widget.eventData["isWorkshop"].toString();
+      _isTechnical = widget.eventData["isTechnical"];
+      _isGroup = widget.eventData["isGroup"];
+      _isPerHeadPrice = widget.eventData["isPerHeadPrice"];
+      _isRefundable = widget.eventData["isRefundable"];
+      _needGroupData = widget.eventData["needGroupData"];
+      _eventDepartmentId = widget.eventData["eventDepartmentId"];
+    });
   }
 
   final GlobalKey<FormState> _newEventFormKey = GlobalKey<FormState>();
@@ -240,7 +300,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
 
   final List<int> _selectedTagIds = [];
 
-  Future<String> _createNewEvent() async {
+  Future<String> _updateEvent() async {
     setState(() {
       _isLoading = true;
     });
@@ -262,7 +322,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
 
       final dio = Dio();
 
-      debugPrint("[CREATE_EVENT] ${{
+      debugPrint("[UPDATE_EVENT] ${{
+        "eventId": widget.eventData["eventId"],
         "eventName": _eventNameController.text.trim(),
         // "eventDescription": _eventDescriptionController.text.trim(),
         // "eventMarkdownDescription": _eventMarkdownDescriptionController.text,
@@ -285,7 +346,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
       }}");
 
       final response = await dio.post(
-        API().createEventUrl,
+        API().updateEventUrl,
         options: Options(
           contentType: Headers.jsonContentType,
           headers: {"Authorization": "Bearer ${sp.getString("anokha-t")}"},
@@ -294,6 +355,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
           },
         ),
         data: {
+          "eventId": widget.eventData["eventId"],
           "eventName": _eventNameController.text.trim(),
           "eventDescription": _eventDescriptionController.text.trim(),
           "eventMarkdownDescription": _eventMarkdownDescriptionController.text,
@@ -400,7 +462,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
                         vertical: 8.0,
                       ),
                       child: Text(
-                        "New Event",
+                        "Edit Event",
                         style: GoogleFonts.habibi(
                           textStyle: Theme.of(context).textTheme.headlineSmall,
                           fontWeight: FontWeight.w500,
@@ -733,18 +795,18 @@ class _NewEventScreenState extends State<NewEventScreen> {
                               });
                             },
                             items: departmentData.map<DropdownMenuItem<String>>(
-                                    (Map<String, dynamic> value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value["departmentId"].toString(),
-                                    child: RichText(
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text: value["departmentName"],
-                                        style: GoogleFonts.poppins(),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
+                                (Map<String, dynamic> value) {
+                              return DropdownMenuItem<String>(
+                                value: value["departmentId"].toString(),
+                                child: RichText(
+                                  overflow: TextOverflow.ellipsis,
+                                  text: TextSpan(
+                                    text: value["departmentName"],
+                                    style: GoogleFonts.poppins(),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           ),
                           const SizedBox(
                             height: 16,
@@ -1542,13 +1604,27 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                 if (_newEventFormKey.currentState!.validate()) {
                                   // TODO: Call API to register new event
 
-                                  _createNewEvent().then((res) => {
+                                  _updateEvent().then((res) => {
                                         if (res == "1")
                                           {
                                             showToast(
-                                              "Event Created Successfully",
+                                              "Event Updated Successfully",
                                             ),
-                                            Navigator.of(context).pop(),
+                                            Navigator.of(context).pushAndRemoveUntil(
+                                              CupertinoPageRoute(
+                                                builder: (context) {
+                                                  switch (widget.managerRoleId) {
+                                                    case "1":
+                                                      return const SuperAdminHomeScreen();
+                                                    case "2":
+                                                      return const AdminHomeScreen();
+                                                    default:
+                                                      return const NotFoundScreen();
+                                                  }
+                                                },
+                                              ),
+                                              (route) => false,
+                                            ),
                                           }
                                         else if (res == "-2")
                                           {
@@ -1583,7 +1659,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                 ),
                               ),
                               child: Text(
-                                "Create Event",
+                                "Edit Event",
                                 style: GoogleFonts.poppins(
                                   textStyle:
                                       Theme.of(context).textTheme.titleLarge,
