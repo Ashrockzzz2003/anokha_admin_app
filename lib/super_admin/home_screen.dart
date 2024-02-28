@@ -99,17 +99,17 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
                           managerRoleId: "1",
                         ),
                         const SizedBox(
-                          height: 24,
+                          height: 16,
                         ),
                         const HomeScreenOfficialComponent(
                           managerRoleId: "1",
                         ),
                         const SizedBox(
-                          height: 24,
+                          height: 16,
                         ),
                         const HomeScreenEventComponent(managerRoleId: "1"),
                         const SizedBox(
-                          height: 24,
+                          height: 16,
                         ),
                         const HomeScreenTagComponent(managerRoleId: "1"),
                       ],

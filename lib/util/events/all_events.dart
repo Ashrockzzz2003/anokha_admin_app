@@ -1,6 +1,8 @@
 import 'package:anokha_admin/admin/events/event_screen.dart';
+import 'package:anokha_admin/admin/events/new_event.dart';
 import 'package:anokha_admin/auth/login_screen.dart';
 import 'package:anokha_admin/super_admin/events/event_screen.dart';
+import 'package:anokha_admin/super_admin/events/new_event.dart';
 import 'package:anokha_admin/util/404.dart';
 import 'package:anokha_admin/util/api.dart';
 import 'package:anokha_admin/util/loading_screen.dart';
@@ -41,7 +43,6 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
         } else {
           Dio()
               .get(
-            // "https://web.abhinavramakrishnan.tech/api/user/getAllEvents",
             API().getAllEventsUrl,
             options: Options(
               contentType: Headers.jsonContentType,
@@ -207,6 +208,37 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      floatingActionButton: _isLoading == true
+          ? null
+          : FloatingActionButton.extended(
+              label: Text(
+                "New Event",
+                style: GoogleFonts.poppins(
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (context) {
+                      switch (widget.managerRoleId) {
+                        case "1":
+                          return const SuperAdminNewEventScreen();
+                        case "2":
+                          return const AdminNewEventScreen();
+                        default:
+                          return const NotFoundScreen();
+                      }
+                    },
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.add_rounded,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
       body: _isLoading == true
           ? const LoadingComponent()
           : CustomScrollView(

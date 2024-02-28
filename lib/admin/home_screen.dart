@@ -49,10 +49,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   centerTitle: true,
                   leading: IconButton(
                     onPressed: () {
-                      Navigator.of(context).pushAndRemoveUntil(
+                      Navigator.of(context).push(
                           CupertinoPageRoute(builder: (context) {
                         return const AdminProfileScreen();
-                      }), (route) => false);
+                      }));
                     },
                     icon: Icon(
                       Icons.admin_panel_settings_rounded,
@@ -98,17 +98,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           managerRoleId: "2",
                         ),
                         const SizedBox(
-                          height: 24,
+                          height: 16,
                         ),
                         const HomeScreenOfficialComponent(
                           managerRoleId: "2",
                         ),
                         const SizedBox(
-                          height: 24,
+                          height: 16,
                         ),
                         const HomeScreenEventComponent(managerRoleId: "2"),
                         const SizedBox(
-                          height: 24,
+                          height: 16,
                         ),
                         const HomeScreenTagComponent(managerRoleId: "2"),
                       ],
