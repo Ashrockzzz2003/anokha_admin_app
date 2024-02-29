@@ -291,6 +291,43 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
                     ),
                   ),
                 ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 16.0,
+                    ),
+                    child: SearchBar(
+                      hintText: "Search Events",
+                      side: MaterialStateBorderSide.resolveWith(
+                        (states) => BorderSide(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                          width: 1.0,
+                        ),
+                      ),
+                      padding: MaterialStateProperty.resolveWith(
+                        (states) => const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                      ),
+                      enabled: true,
+                      leading: const Icon(
+                        Icons.search_rounded,
+                      ),
+                      onChanged: (String value) {
+                        setState(() {
+                          filteredEventsData = eventsData
+                              .where((element) => element["eventName"]
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
+                              .toList();
+                        });
+                      },
+                    ),
+                  ),
+                ),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12.0,

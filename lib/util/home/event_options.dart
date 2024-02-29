@@ -136,6 +136,52 @@ class HomeScreenEventComponent extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(
+            height: 16,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.88,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                // TODO: redirect to choose events for taking attendance.
+                // Navigator.of(context).push(
+                //   CupertinoPageRoute(
+                //     builder: (context) {
+                //       switch (managerRoleId) {
+                //         case "1":
+                //           return const SuperAdminNewEventScreen();
+                //         case "2":
+                //           return const AdminNewEventScreen();
+                //         default:
+                //           return const NotFoundScreen();
+                //       }
+                //     },
+                //   ),
+                // );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 16.0,
+                ),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+              ),
+              icon: Icon(
+                Icons.attractions_rounded,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              label: Text(
+                "Take Attendance for Events",
+                style: GoogleFonts.raleway(
+                  textStyle: Theme.of(context).textTheme.titleSmall,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
