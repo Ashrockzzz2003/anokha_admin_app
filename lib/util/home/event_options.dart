@@ -1,6 +1,10 @@
 import 'package:anokha_admin/admin/events/all_events.dart';
+import 'package:anokha_admin/admin/events/choose_event_to_take_attendance.dart';
 import 'package:anokha_admin/admin/events/new_event.dart';
+import 'package:anokha_admin/dept_head/events/choose_event_to_take_attendance.dart';
+import 'package:anokha_admin/global_event_attendance/events/choose_event_to_take_attendance.dart';
 import 'package:anokha_admin/super_admin/events/all_events.dart';
+import 'package:anokha_admin/super_admin/events/choose_event_to_take_attendance.dart';
 import 'package:anokha_admin/super_admin/events/new_event.dart';
 import 'package:anokha_admin/util/404.dart';
 import 'package:flutter/cupertino.dart';
@@ -144,20 +148,24 @@ class HomeScreenEventComponent extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: () {
                 // TODO: redirect to choose events for taking attendance.
-                // Navigator.of(context).push(
-                //   CupertinoPageRoute(
-                //     builder: (context) {
-                //       switch (managerRoleId) {
-                //         case "1":
-                //           return const SuperAdminNewEventScreen();
-                //         case "2":
-                //           return const AdminNewEventScreen();
-                //         default:
-                //           return const NotFoundScreen();
-                //       }
-                //     },
-                //   ),
-                // );
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) {
+                      switch (managerRoleId) {
+                        case "1":
+                          return const SuperAdminChooseEventToTakeAttendanceScreen();
+                        case "2":
+                          return const AdminChooseEventToTakeAttendanceScreen();
+                        case "4":
+                          return const DeptHeadChooseEventToTakeAttendanceScreen();
+                        case "6":
+                          return const GlobalEventAttendanceMarkerChooseEventToTakeAttendanceScreen();
+                        default:
+                          return const NotFoundScreen();
+                      }
+                    },
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(

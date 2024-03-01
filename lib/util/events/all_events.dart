@@ -46,6 +46,9 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
             API().getAllEventsUrl,
             options: Options(
               contentType: Headers.jsonContentType,
+              headers: {
+                "Authorization": "Bearer ${sp.getString("anokha-t")}",
+              },
               validateStatus: (status) {
                 return status! < 1000;
               },
@@ -57,11 +60,12 @@ class _AllEventsScreenState extends State<AllEventsScreen> {
             switch (response.statusCode) {
               case 200:
                 // Success
-                debugPrint("getAllTags");
+                debugPrint("getAllEvents");
+                // debugPrint(response.data.toString());
 
                 setState(() {
                   eventsData =
-                      List<Map<String, dynamic>>.from(response.data["EVENTS"]);
+                      List<Map<String, dynamic>>.from(response.data["events"]);
                   filteredEventsData = eventsData;
                 });
                 break;

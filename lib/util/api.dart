@@ -1,6 +1,6 @@
 class API {
-  final String baseUrl = "http://localhost:5000/api";
-  // final String baseUrl = "https://web.abhinavramakrishnan.tech/api";
+  // final String baseUrl = "http://localhost:5000/api";
+  final String baseUrl = "https://web.abhinavramakrishnan.tech/api";
   // final String baseUrl = "https://anokha.amrita.edu/api";
 
   String get loginUrl => "$baseUrl/auth/loginOfficial";
@@ -20,7 +20,7 @@ class API {
 
   String get getAllDepartmentsUrl => "$baseUrl/admin/getDepartments";
 
-  String get getAllEventsUrl => "$baseUrl/user/getAllEvents";
+  String get getAllEventsUrl => "$baseUrl/admin/getOfficialEvents";
   String get createEventUrl => "$baseUrl/admin/createEvent";
   String get updateEventUrl => "$baseUrl/admin/editEventData";
   String get getIndividualEventPrefixUrl => "$baseUrl/user/getEventData";

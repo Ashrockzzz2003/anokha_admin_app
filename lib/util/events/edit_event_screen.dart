@@ -866,8 +866,18 @@ class _EditEventScreenState extends State<EditEventScreen> {
                               );
 
                               if (pickedTime != null) {
-                                String formattedTime =
-                                    "${pickedTime.hour}:${pickedTime.minute}:00";
+                                String formattedTime = "";
+
+                                formattedTime += pickedTime.hour.toString().length == 1
+                                    ? "0${pickedTime.hour}"
+                                    : pickedTime.hour.toString();
+
+                                formattedTime += ":";
+
+                                formattedTime += pickedTime.minute.toString().length == 1
+                                    ? "0${pickedTime.minute}"
+                                    : pickedTime.minute.toString();
+
                                 setState(() {
                                   _eventTimeController.text = formattedTime;
                                 });
