@@ -1,7 +1,7 @@
 class API {
   // final String baseUrl = "http://localhost:5000/api";
-  final String baseUrl = "https://web.abhinavramakrishnan.tech/api";
-  // final String baseUrl = "https://anokha.amrita.edu/api";
+  // final String baseUrl = "https://web.abhinavramakrishnan.tech/api";
+  final String baseUrl = "https://anokha.amrita.edu/api";
 
   String get loginUrl => "$baseUrl/auth/loginOfficial";
   String get forgotPasswordUrl => "$baseUrl/auth/forgotPasswordOfficial";
