@@ -1,29 +1,38 @@
+import 'package:anokha_admin/util/data_validator.dart';
+import 'package:flutter/cupertino.dart';
+
+String _baseUrl = "https://anokha.amrita.edu/api";
+
 class API {
-  // final String baseUrl = "http://localhost:5000/api";
-  // final String baseUrl = "https://web.abhinavramakrishnan.tech/api";
-  final String baseUrl = "https://anokha.amrita.edu/api";
+  // final String _baseUrl = "http://localhost:5000/api";
+  // final String _baseUrl = "https://web.abhinavramakrishnan.tech/api";
 
-  String get loginUrl => "$baseUrl/auth/loginOfficial";
-  String get forgotPasswordUrl => "$baseUrl/auth/forgotPasswordOfficial";
-  String get resetPasswordUrl => "$baseUrl/auth/resetPasswordOfficial";
-  String get registerOfficialUrl => "$baseUrl/auth/registerOfficial";
-  String get getAllOfficialsUrl => "$baseUrl/admin/getAllOfficials";
-  String get toggleOfficialStatusUrl => "$baseUrl/admin/toggleOfficialStatus";
+  bool setBaseUrl(String url) {
+    debugPrint("Setting base url to: $url");
+    _baseUrl = url;
+    return true;
+  }
 
-  String get profileUrl => "$baseUrl/admin/getOfficialProfile";
-  String get editProfileUrl => "$baseUrl/admin/editOfficialProfile";
+  String get baseUrl => _baseUrl;
 
-  String get getAllTagsUrl => "$baseUrl/admin/getAllTags";
-  String get createTagUrl => "$baseUrl/admin/addTag";
-  String get toggleTagStatusUrl => "$baseUrl/admin/toggleTagStatus";
+  String get loginUrl => "$_baseUrl/auth/loginOfficial";
+  String get forgotPasswordUrl => "$_baseUrl/auth/forgotPasswordOfficial";
+  String get resetPasswordUrl => "$_baseUrl/auth/resetPasswordOfficial";
+  String get registerOfficialUrl => "$_baseUrl/auth/registerOfficial";
+  String get getAllOfficialsUrl => "$_baseUrl/admin/getAllOfficials";
+  String get toggleOfficialStatusUrl => "$_baseUrl/admin/toggleOfficialStatus";
 
+  String get profileUrl => "$_baseUrl/admin/getOfficialProfile";
+  String get editProfileUrl => "$_baseUrl/admin/editOfficialProfile";
 
-  String get getAllDepartmentsUrl => "$baseUrl/admin/getDepartments";
+  String get getAllTagsUrl => "$_baseUrl/admin/getAllTags";
+  String get createTagUrl => "$_baseUrl/admin/addTag";
+  String get toggleTagStatusUrl => "$_baseUrl/admin/toggleTagStatus";
 
-  String get getAllEventsUrl => "$baseUrl/admin/getOfficialEvents";
-  String get createEventUrl => "$baseUrl/admin/createEvent";
-  String get updateEventUrl => "$baseUrl/admin/editEventData";
-  String get getIndividualEventPrefixUrl => "$baseUrl/user/getEventData";
+  String get getAllDepartmentsUrl => "$_baseUrl/admin/getDepartments";
 
-
+  String get getAllEventsUrl => "$_baseUrl/admin/getOfficialEvents";
+  String get createEventUrl => "$_baseUrl/admin/createEvent";
+  String get updateEventUrl => "$_baseUrl/admin/editEventData";
+  String get getIndividualEventPrefixUrl => "$_baseUrl/user/getEventData";
 }

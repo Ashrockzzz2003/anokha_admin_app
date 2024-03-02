@@ -6,6 +6,7 @@ import 'package:anokha_admin/finance/home_screen.dart';
 import 'package:anokha_admin/gate_entry_exit/home_screen.dart';
 import 'package:anokha_admin/global_event_attendance/home_screen.dart';
 import 'package:anokha_admin/local_event_attendance/home_screen.dart';
+import 'package:anokha_admin/settings.dart';
 import 'package:anokha_admin/super_admin/home_screen.dart';
 import 'package:anokha_admin/util/404.dart';
 import 'package:anokha_admin/util/api.dart';
@@ -219,7 +220,42 @@ class _LoginScreenState extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const SizedBox(
-                            height: 72.0,
+                            height: 36.0,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) {
+                                    return const SettingsScreen();
+                                  },
+                                ),
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(32.0),
+                            child: Chip(
+                              label: Text(
+                                "Configure Server URL",
+                                style: GoogleFonts.poppins(
+                                  textStyle:
+                                      Theme.of(context).textTheme.titleMedium,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              backgroundColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(32.0),
+                              ),
+                              padding: const EdgeInsets.all(8.0),
+                              avatar: Icon(
+                                Icons.settings_rounded,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 36.0,
                           ),
                           TextFormField(
                             keyboardType: TextInputType.emailAddress,
