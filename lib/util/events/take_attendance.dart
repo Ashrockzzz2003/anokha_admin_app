@@ -5,7 +5,6 @@ import 'package:anokha_admin/util/toast_message.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -18,10 +17,8 @@ class TakeAttendance extends StatefulWidget {
     required this.eventData,
     required this.managerRoleId,
   });
-
   final Map<String, dynamic> eventData;
   final String managerRoleId;
-
   @override
   State<TakeAttendance> createState() => _TakeAttendanceState();
 }
@@ -33,7 +30,7 @@ class _TakeAttendanceState extends State<TakeAttendance> {
     autoStart: true,
     facing: CameraFacing.back,
     formats: [BarcodeFormat.qrCode],
-    useNewCameraSelector: true,
+    useNewCameraSelector: true
   );
   bool _isLoading = false;
 
@@ -184,6 +181,8 @@ class _TakeAttendanceState extends State<TakeAttendance> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -251,69 +250,47 @@ class _TakeAttendanceState extends State<TakeAttendance> {
                         controller: cameraController,
                         fit: BoxFit.cover,
                         onDetect: (capture) {
-                          debugPrint("[CAPTURED]: ${qrDone.toString()}");
-
-                          if (qrDone == true) {
-                            return;
-                          }
-
-                          final qrCode = capture.barcodes[0].rawValue;
-                          if (qrCode != null) {
-                            studentID = qrCode;
-
-                            setState(() {
-                              qrDone = true;
-                            });
-
-                            // TODO: Mark Attendance
-
-                            // studentID is  of format anokha://studentId
-                            // We need to extract the studentId from it
-
-                            if (studentID == null ||
-                                studentID!.isEmpty ||
-                                studentID!.length < 9 ||
-                                !studentID!.startsWith("anokha://")) {
-                              showToast("Invalid QR Code");
-                              Future.delayed(
-                                  const Duration(seconds: 2),
-                                  () => setState(() {
-                                        qrDone = false;
-                                      }));
-                              return;
-                            }
-
-                            studentID = studentID!.substring(9);
-
-                            debugPrint(_selected[0].toString());
-
-                            if (_selected[0] == true) {
-                              markEntry(studentID.toString()).then((res) {
-                                if (res == "1") {
-                                  showToast("Entry Marked");
-                                }
-                              });
-
-
+                          final qrCode = capture.barcodes.first.rawValue;
+                          if (qrCode != null && qrCode.startsWith("anokha://")) {
+                            if (!qrDone) {
                               setState(() {
-                                qrDone = false;
+                                qrDone = true;
                               });
-                            } else {
-                              markExit(studentID.toString()).then((res) {
-                                if (res == "1") {
-                                  showToast("Exit Marked");
+
+                              final studentId = qrCode.substring(9);
+
+                              (_selected[0] ? markEntry(studentId) : markExit(studentId)).then((result) {
+                                if (result == "1") {
+                                  showToast(_selected[0] ? "Entry Marked" : "Exit Marked");
+
+                                } else {
+                                  showToast("Failed to mark. Try again.");
+                                }
+
+                                // Reset qrDone state after a short delay
+                                Future.delayed(const Duration(milliseconds: 500), () {
+                                  if (mounted) {
+                                    setState(() {
+                                      qrDone = false;
+                                    });
+                                  }
+                                });
+                              }).catchError((error) {
+                                showToast("Error processing the scan: ${error.toString()}");
+                                if (mounted) {
+                                  setState(() {
+                                    qrDone = false; // Reset on error
+                                  });
                                 }
                               });
-
-
-
+                            }
+                          } else {
+                            if (mounted && qrDone) {
                               setState(() {
                                 qrDone = false;
                               });
                             }
                           }
-
-                          return;
                         },
                       ),
                       QRScannerOverlay(

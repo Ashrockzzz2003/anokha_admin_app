@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 // String _baseUrl = "https://anokha.amrita.edu/api";
-String _baseUrl = "https://web.abhinavramakrishnan.tech/api";
+String _baseUrl = "https://anokha.amrita.edu/api";
 
 class API {
   // final String _baseUrl = "http://localhost:5000/api";
