@@ -1,7 +1,7 @@
-import 'package:anokha_admin/util/data_validator.dart';
 import 'package:flutter/cupertino.dart';
 
-String _baseUrl = "https://anokha.amrita.edu/api";
+// String _baseUrl = "https://anokha.amrita.edu/api";
+String _baseUrl = "https://web.abhinavramakrishnan.tech/api";
 
 class API {
   // final String _baseUrl = "http://localhost:5000/api";
@@ -35,4 +35,8 @@ class API {
   String get createEventUrl => "$_baseUrl/admin/createEvent";
   String get updateEventUrl => "$_baseUrl/admin/editEventData";
   String get getIndividualEventPrefixUrl => "$_baseUrl/user/getEventData";
+
+  String get markAttendanceEntryUrl => "$_baseUrl/admin/markEventAttendanceEntry";
+  String get markEventAttendanceExitUrl => "$_baseUrl/admin/markEventAttendanceExit";
+
 }
