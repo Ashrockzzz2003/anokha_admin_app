@@ -3,9 +3,8 @@ class DataValidator {
     if (value == null || value.isEmpty) {
       return 'Please select a Department';
     }
-    // string number in range 1-22
-    final roleRegex = RegExp(r'^[1-9]$|^1[0-9]$|^2[0-2]$');
-    if (!roleRegex.hasMatch(value)) {
+    final deptRegex = RegExp(r'^[0-9]+$');
+    if (!deptRegex.hasMatch(value)) {
       return 'Please select a valid Department';
     }
     return null;

@@ -739,7 +739,11 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                       overflow: TextOverflow.ellipsis,
                                       text: TextSpan(
                                         text: value["departmentName"],
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                   );
@@ -1004,14 +1008,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                       value: "1",
                                       child: Text(
                                         "Per Head",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                     DropdownMenuItem(
                                       value: "0",
                                       child: Text(
                                         "Per Team",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -1074,14 +1086,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                       value: "1",
                                       child: Text(
                                         "Workshop",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                     DropdownMenuItem(
                                       value: "0",
                                       child: Text(
                                         "Event",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -1135,14 +1155,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                       value: "1",
                                       child: Text(
                                         "Yes",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                     DropdownMenuItem(
                                       value: "0",
                                       child: Text(
                                         "No",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -1205,14 +1233,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                       value: "1",
                                       child: Text(
                                         "Yes",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                     DropdownMenuItem(
                                       value: "0",
                                       child: Text(
                                         "No",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -1265,14 +1301,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                       value: "1",
                                       child: Text(
                                         "Group",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                     DropdownMenuItem(
                                       value: "0",
                                       child: Text(
                                         "Individual",
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -1332,14 +1376,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                   value: "1",
                                   child: Text(
                                     "Yes",
-                                    style: GoogleFonts.poppins(),
+                                    style: GoogleFonts.poppins(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer,
+                                    ),
                                   ),
                                 ),
                                 DropdownMenuItem(
                                   value: "0",
                                   child: Text(
                                     "No",
-                                    style: GoogleFonts.poppins(),
+                                    style: GoogleFonts.poppins(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer,
+                                    ),
                                   ),
                                 ),
                               ],
