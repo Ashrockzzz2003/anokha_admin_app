@@ -45,8 +45,7 @@ class DataValidator {
   }
 
   String? emailValidator(String? value) {
-    final emailRegex = RegExp(
-        r'^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$');
+    final emailRegex = RegExp(r'^[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$');
     if (value == null || value.isEmpty) {
       return 'Please enter Email';
     }
