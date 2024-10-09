@@ -582,7 +582,9 @@ class _NewOfficialScreenState extends State<NewOfficialScreen> {
                                       overflow: TextOverflow.ellipsis,
                                       text: TextSpan(
                                         text: value["departmentName"],
-                                        style: GoogleFonts.poppins(),
+                                        style: GoogleFonts.poppins(
+                                          color: Theme.of(context).colorScheme.primary,
+                                        ),
                                       ),
                                     ),
                                   );
